@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const mongoose = require('mongoose');
 const MONGO_URI = process.env.MONGO_URI;
-
+const { countConnect } = require('../helpers/check.connect');
 class Database {
     constructor() {
         this._connect();
@@ -15,6 +15,7 @@ class Database {
             mongoose.set('debug', {color:true});
         }
         mongoose.connect(MONGO_URI).then(() => {
+            countConnect();
             console.log('Database connection successful');
         }).catch((err) => {
             console.error('Database connection failed with error ' + err);

@@ -15,7 +15,6 @@ app.use(compression()); // compress all responses
 
 // init dbs
 require('./dbs/init.mongodb');
-
 // init routes
 app.get('/', (req, res) => {
     return res.status(200).json(
