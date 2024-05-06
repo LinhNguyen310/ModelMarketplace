@@ -6,7 +6,6 @@ const morgan = require('morgan');
 const app = express();
 const cors = require('cors');
 
-console.log('Process: ', process.env)
 // init cors
 app.use(cors(process.env.CORS_ORIGIN));
 
@@ -20,10 +19,5 @@ require('./dbs/init.mongodb');
 const { checkOverload } = require('./helpers/check.connect');
 checkOverload();
 // init routes
-app.get('/', (req, res) => {
-    return res.status(200).json(
-        { message: 'Hello World' }
-    );
-});
-
+app.use('', require('./routes/index'));
 module.exports = app;
