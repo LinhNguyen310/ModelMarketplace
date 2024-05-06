@@ -15,6 +15,8 @@ app.use(compression()); // compress all responses
 
 // init dbs
 require('./dbs/init.mongodb');
+const { checkOverload } = require('./helpers/check.connect');
+checkOverload();
 // init routes
 app.get('/', (req, res) => {
     return res.status(200).json(
