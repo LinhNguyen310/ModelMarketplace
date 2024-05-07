@@ -49,7 +49,6 @@ class AccessService {
                 }
                 // create access token and refresh token
                 const tokens = await createTokenPair({userId: newShop._id}, publicKey, privateKey);
-                console.log("Service Shop Test", newShop)
                 return {
                     code: '201', // created
                     metadata: {
