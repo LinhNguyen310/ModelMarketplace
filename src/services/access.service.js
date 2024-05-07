@@ -40,7 +40,7 @@ class AccessService {
                     modulusLength: 4096,
                 });
                 console.log({ privateKey, publicKey }); // save collection key store
-                const publicKeyString = await KeyTokenService.createToken({userId: newShop._id, publicKey: publicKey});
+                const publicKeyString = await KeyTokenService.createToken({userId: newShop._id, publicKey});
                 if (!publicKeyString){
                     return {
                         code: 'Error Code For Public Key',
@@ -49,8 +49,9 @@ class AccessService {
                     }
                 }
                 // create access token and refresh token
-                const tokens = await createTokenPair({userId: newShop._id}, {publicKey: publicKey}, {privateKey: privateKey});
-                console.log({ accessToken, refreshToken });
+                const tokens = await createTokenPair({userId: newShop._id}, publicKey, privateKey);
+                console.log("generated tokens")
+                console.log(tokens); // save collection key store
                 return {
                     code: '201', // created
                     metadata: {
