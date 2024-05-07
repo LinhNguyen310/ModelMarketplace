@@ -30,7 +30,7 @@ class AccessService {
             // shop hasnt been created yet
             // hash the password, 10 is enough if more will affect cpu performance
             const passwordHash = await bcrypt.hash(password, 10);
-            const newShop = shopModel.create({name, email, password: passwordHash, roles: [roleShop.SHOP]}); 
+            const newShop = await shopModel.create({name, email, password: passwordHash, roles: [roleShop.SHOP]}); 
 
             if (newShop){
                 // create privateKey, publicKey
@@ -39,7 +39,6 @@ class AccessService {
                 const { privateKey, publicKey} = crypto.generateKeyPairSync('rsa', {
                     modulusLength: 4096,
                 });
-                console.log({ privateKey, publicKey }); // save collection key store
                 const publicKeyString = await KeyTokenService.createToken({userId: newShop._id, publicKey});
                 if (!publicKeyString){
                     return {
@@ -50,8 +49,7 @@ class AccessService {
                 }
                 // create access token and refresh token
                 const tokens = await createTokenPair({userId: newShop._id}, publicKey, privateKey);
-                console.log("generated tokens")
-                console.log(tokens); // save collection key store
+                console.log("Service Shop Test", newShop)
                 return {
                     code: '201', // created
                     metadata: {
