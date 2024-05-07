@@ -1,7 +1,9 @@
 'use strict'
 const shopModel = require('../models/shop.model');
 const bcrypt = require('bcrypt');
-const { crypto } = require('crypto');
+const crypto = require('crypto');
+const KeyTokenService = require('./keyToken.service');
+const { createTokenPair } = require('../auth/authUtils');
 
 const roleShop = {
     SHOP: '000',
@@ -38,6 +40,28 @@ class AccessService {
                     modulusLength: 4096,
                 });
                 console.log({ privateKey, publicKey }); // save collection key store
+                const publicKeyString = await KeyTokenService.createToken({userId: newShop._id, publicKey: publicKey});
+                if (!publicKeyString){
+                    return {
+                        code: 'Error Code For Public Key',
+                        message: 'Public Key Error',
+                        status: 'Error Status'
+                    }
+                }
+                // create access token and refresh token
+                const tokens = await createTokenPair({userId: newShop._id}, {publicKey: publicKey}, {privateKey: privateKey});
+                console.log({ accessToken, refreshToken });
+                return {
+                    code: '201', // created
+                    metadata: {
+                        shop: newShop,
+                        tokens
+                    }
+                }
+            }
+            return  {
+                code: 200,
+                metadata: null
             }
         } catch (error) {
             return {

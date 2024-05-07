@@ -13,12 +13,12 @@ app.use(cors(process.env.CORS_ORIGIN));
 app.use(morgan('dev'));
 app.use(helmet()); // hide crucial information
 app.use(compression()); // compress all responses
-
+app.use(express.json()); // parse json
+app.use(express.urlencoded({ extended: true })); // parse urlencoded
 // init dbs
 require('./dbs/init.mongodb');
 const { checkOverload } = require('./helpers/check.connect');
 checkOverload();
 // init routes
-app.use(express.json());
 app.use('', require('./routes/index'));
 module.exports = app;
