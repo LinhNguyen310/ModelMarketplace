@@ -38,6 +38,14 @@ class AccessService {
                 // public key is to verify the token
                 const { privateKey, publicKey} = crypto.generateKeyPairSync('rsa', {
                     modulusLength: 4096,
+                    publicKeyEncoding: {
+                        type: 'pkcs1', // Public Key Cryptography Standards 1
+                        format: 'pem' // Privacy Enhanced Mail
+                    },
+                    privateKeyEncoding: {
+                        type: 'pkcs1',
+                        format: 'pem'
+                    }
                 });
                 const publicKeyString = await KeyTokenService.createToken({userId: newShop._id, publicKey});
                 if (!publicKeyString){
@@ -47,8 +55,11 @@ class AccessService {
                         status: 'Error Status'
                     }
                 }
+                // has public key string
+                const publicKeyObject = crypto.createPublicKey(publicKeyString);
+                
                 // create access token and refresh token
-                const tokens = await createTokenPair({userId: newShop._id}, publicKey, privateKey);
+                const tokens = await createTokenPair({userId: newShop._id, email}, publicKeyObject, privateKey);
                 return {
                     code: '201', // created
                     metadata: {

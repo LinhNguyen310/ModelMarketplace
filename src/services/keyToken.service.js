@@ -11,7 +11,7 @@ class KeyTokenService {
             const token = await keytokenModel.create({
                 user: userId,
                 publicKey: publicKeyString});
-            return token ? publicKeyString : null; // return public key if token exists
+            return token ? token.publicKey : null; // return public key if token exists
         } catch (error) {
             return {
                 code: 'Error Code',
