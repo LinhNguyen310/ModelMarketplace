@@ -17,6 +17,8 @@ const apikey = async (req, res, next) => {
         }
         // check apikey in database
         const objKey = await ApiKeyService.findById(key);
+        
+
         if (!objKey) {
             return res.status(403).json({
                 message: 'Forbidden Error'
@@ -33,4 +35,27 @@ const apikey = async (req, res, next) => {
     }
 }
 
-module.exports = {apikey};
+const permission = ( permission ) => {
+    return (req, res, next) => {
+        if (! req.objKey.permissions) {
+            return res.status(403).json({
+                message: 'Permission Denied'
+            });
+        }
+        // has permission
+        // check if objKey.permission is in permissions
+        console.log(req.objKey.permissions);
+        const validPermission = req.objKey.permissions.includes(permission);
+
+        if (!validPermission) {
+            return res.status(403).json({
+                message: 'Permission Denied'
+            });
+        }
+        return next();  // call the next middleware function in the stack
+    }
+}
+
+module.exports = {
+    apikey,
+    permission};
