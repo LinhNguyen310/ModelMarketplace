@@ -9,4 +9,7 @@ const router = express.Router();
 // call asyncHandler to catch the error that was thrown inside the code
 router.post('/shop/signup', asyncHandler(accessController.signUp));
 
+// login
+router.post('/shop/login', asyncHandler(accessController.login));
+
 module.exports = router;

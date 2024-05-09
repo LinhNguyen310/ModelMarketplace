@@ -15,11 +15,17 @@ var keyTokenSchema = new Schema({
         required:true,
 
     },
-    refreshToken:{
+    refreshTokensUsed:{
         // refresh token is used to get new access token
         // detect if token is using wrong
         type:Array,
         default:[],
+    },
+    refreshToken:{
+        // is currently being used
+        type:String,
+        default:null,
+        required: true,
     },
 }, {
     timestamps: true, // createdAt, updatedAt automatically created
