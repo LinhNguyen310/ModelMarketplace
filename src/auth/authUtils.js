@@ -1,6 +1,13 @@
 'use strict'
 const JWT = require('jsonwebtoken');
+const {asyncHandler} = require('../helpers/asyncHandler');
+const { AuthFailureError } = require('../core/error.response');
 
+const HEADER = {
+    API_KEY: 'x-api-key',
+    AUTHORIZATION: 'authorization',
+    CLIENT_ID: 'x-client-id',
+}
 const createTokenPair = async (payload, publicKey, privateKey) => {
     // public key is to verify the token
     // payload is the data you want to transfer in the token
@@ -39,6 +46,23 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
     }
 }
 
+/*
+*/
+const authentication = asyncHandler( async (req, res, next) => {
+    /*
+        1- Check user id is missing
+        2- Get access token
+        3- Verify token
+        4- Check user id is valid
+        5- Check keystore with this userid
+        6- OK return next
+    */
+    const userId = req.headers[HEADER.CLIENT_ID];
+    if (!userId) throw new AuthFailureError('Client ID is missing');
+
+});
+
 module.exports = {
-    createTokenPair
-}
+    createTokenPair,
+    authentication
+};
