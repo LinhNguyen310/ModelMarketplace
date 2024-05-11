@@ -1,7 +1,8 @@
 'use strict'
 const JWT = require('jsonwebtoken');
 const {asyncHandler} = require('../helpers/asyncHandler');
-const { AuthFailureError } = require('../core/error.response');
+const { AuthFailureError, NotFoundError } = require('../core/error.response');
+const KeyTokenService = require('../services/keyToken.service');
 
 const HEADER = {
     API_KEY: 'x-api-key',
@@ -57,8 +58,26 @@ const authentication = asyncHandler( async (req, res, next) => {
         5- Check keystore with this userid
         6- OK return next
     */
+    // send userid through header because we use helmet middleware 
     const userId = req.headers[HEADER.CLIENT_ID];
-    if (!userId) throw new AuthFailureError('Client ID is missing');
+    if (!userId) throw new AuthFailureError('Invalid Request');
+    const keyStore = await KeyTokenService.findByUserId(userId);
+    if (!keyStore) throw new NotFoundError('Not Found keystore');
+    // if has in db, then verify the token
+    const accessToken = req.headers[HEADER.AUTHORIZATION];
+    if (!accessToken) throw new AuthFailureError('Invalid Request');
+    
+    // put try catch here because verify will throw an error if the token is invalid
+    // put try catch where the function might throw an error
+    try {
+        const decodeUser = JWT.verify(accessToken, keyStore.publicKey); // return decode object
+        if (userId !== decodeUser.userId) throw new AuthFailureError('Invalid Request');
+        // if it matches, return next
+        req.keyStore = keyStore; // put the keystore in the request object to use in the next middleware
+        next();
+    } catch(error) {
+        throw new AuthFailureError('Invalid Request');
+    }
 
 });
 

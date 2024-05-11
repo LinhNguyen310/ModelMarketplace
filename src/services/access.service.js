@@ -17,6 +17,7 @@ const roleShop = {
 
 class AccessService {
     static logout = async ({accessToken}) => {
+        
     }
     /*
     * @param {Object} param0
