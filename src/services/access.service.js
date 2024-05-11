@@ -63,13 +63,16 @@ class AccessService {
         
         // has public key string
         const publicKeyObject = crypto.createPublicKey(publicKeyString);
-        
+
+        const {_id: userId} = foundShop._id;
+ 
+
         // create access token and refresh token
-        const tokens = await createTokenPair({userId: foundShop._id, email}, publicKeyObject, privateKey);
+        const tokens = await createTokenPair({userId, email}, publicKeyObject, privateKey);
 
 
         await KeyTokenService.createToken({
-            userId: foundShop._id,
+            userId,
             refreshTokensUsed: tokens.refreshToken,
             publicKey, 
             privateKey}
