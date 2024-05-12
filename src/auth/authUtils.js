@@ -60,23 +60,27 @@ const authentication = asyncHandler( async (req, res, next) => {
     */
     // send userid through header because we use helmet middleware 
     const userId = req.headers[HEADER.CLIENT_ID];
-    if (!userId) throw new AuthFailureError('Invalid Request');
+    if (!userId) throw new AuthFailureError('id user not found');
     const keyStore = await KeyTokenService.findByUserId(userId);
+    console.log("KeyStore: ", keyStore);
     if (!keyStore) throw new NotFoundError('Not Found keystore');
     // if has in db, then verify the token
     const accessToken = req.headers[HEADER.AUTHORIZATION];
-    if (!accessToken) throw new AuthFailureError('Invalid Request');
+    if (!accessToken) throw new AuthFailureError('Invalid Request access token not found');
     
+    console.log("accessToken ", accessToken)
     // put try catch here because verify will throw an error if the token is invalid
     // put try catch where the function might throw an error
     try {
         const decodeUser = JWT.verify(accessToken, keyStore.publicKey); // return decode object
-        if (userId !== decodeUser.userId) throw new AuthFailureError('Invalid Request');
+        console.log("decode user id ", decodeUser.userId)
+        console.log("header user if ", userId)
+        if (userId !== decodeUser.userId) throw new AuthFailureError('Invalid Request user id not found');
         // if it matches, return next
         req.keyStore = keyStore; // put the keystore in the request object to use in the next middleware
         next();
     } catch(error) {
-        throw new AuthFailureError('Invalid Request');
+        throw new AuthFailureError(error.message || 'Invalid Request token not found');
     }
 
 });

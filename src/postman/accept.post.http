@@ -4,9 +4,21 @@
 ### SIGNUP SHOP
 POST {{url_dev}}/shop/signup
 Content-Type: application/json
+x-api-key: 3f870450d18c6d2d2e972b253ebf61bcfe91a120586af5c74541e63c8f76da0e0b3be5498ce903a34cee483fbd727e2f298bd1780d55f32f48a44ffdf190bdad
 
 {
-    "name": "Shop 16",
-    "email": "tes16@gmail.com",
+    "name": "Shop 19",
+    "email": "tes20@gmail.com",
+    "password": "123456"
+}
+
+### LOGIN SHOP
+POST {{url_dev}}/shop/login
+Content-Type: application/json
+x-api-key: 3f870450d18c6d2d2e972b253ebf61bcfe91a120586af5c74541e63c8f76da0e0b3be5498ce903a34cee483fbd727e2f298bd1780d55f32f48a44ffdf190bdad
+
+{
+    "name": "Shop 19",
+    "email": "tes20@gmail.com",
     "password": "123456"
 }
