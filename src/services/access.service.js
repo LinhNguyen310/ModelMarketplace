@@ -5,8 +5,10 @@ const crypto = require('crypto');
 const KeyTokenService = require('./keyToken.service');
 const { createTokenPair } = require('../auth/authUtils');
 const { getInfoData } = require('../utils');
+const {Types, default: mongoose} = require('mongoose');
 const { BadRequestError, ConflictRequestError, AuthFailureError } = require('../core/error.response');
 const ShopService = require('./shop.service');
+const keytokenModel = require('../models/keytoken.model');
 
 const roleShop = {
     SHOP: '000',
@@ -16,8 +18,11 @@ const roleShop = {
 }
 
 class AccessService {
-    static logout = async ({accessToken}) => {
-        
+    static logout = async ({keyStore}) => {
+        const newUserId = new Types.ObjectId(keyStore.userId);
+        const delKey = await KeyTokenService.removeKeyById({_id:newUserId});
+        console.log({delKey});
+        return delKey;
     }
     /*
     * @param {Object} param0
