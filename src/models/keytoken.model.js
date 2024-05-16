@@ -15,6 +15,11 @@ var keyTokenSchema = new Schema({
         required:true,
 
     },
+    privateKey:{
+        type:String,
+        required:true,
+
+    },
     refreshTokensUsed:{
         // refresh token is used to get new access token
         // detect if token is using wrong

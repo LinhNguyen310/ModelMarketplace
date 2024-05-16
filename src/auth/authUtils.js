@@ -36,7 +36,7 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 
         return {
             accessToken,
-            refreshToken
+            refreshToken,
         }
     } catch (error) {
         return {
@@ -85,7 +85,13 @@ const authentication = asyncHandler( async (req, res, next) => {
 
 });
 
+const verifyJWT = async(token, keySecret) => {
+    // return user object
+    return await JWT.verify(token, keySecret);
+}
+
 module.exports = {
     createTokenPair,
-    authentication
+    authentication,
+    verifyJWT
 };
