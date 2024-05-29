@@ -9,9 +9,9 @@ const {product, clothing, electronic} = require('../models/product.model');
 class ProductFactory {
     static async createProduct(type, payload){
         switch(type){
-            case 'clothing':
+            case 'Clothing':
                 return await new Clothing(payload);
-            case 'electronic':
+            case 'Electronic':
                 return await new Electronic(payload);
             default:
                 throw new BadRequestError(`Invalid product type ${type}`);
