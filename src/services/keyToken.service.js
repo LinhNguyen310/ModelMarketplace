@@ -5,9 +5,9 @@ const keytokenModel = require("../models/keytoken.model");
 const {Types, default: mongoose} = require('mongoose');
 
 class KeyTokenService {
-    static updateRefreshToken = async ({userId, usedRefreshToken, newRefreshToken}) => {
+    static updateRefreshToken = async ({keystore, userId, usedRefreshToken, newRefreshToken}) => {
         try {
-            return await keytokenModel.findOneAndUpdate(
+            return await keystore.findOneAndUpdate(
                 {user: userId},
                 {
                     $set: {
@@ -63,8 +63,7 @@ class KeyTokenService {
         try {
             const newUserId = new Types.ObjectId(userId);
             console.log(newUserId)
-            const token = await keytokenModel.findOne({user: newUserId}).lean(); // Types.ObjectId(userId) to convert string to ObjectId
-            console.log("token", token)
+            const token = await keytokenModel.findOne({user: newUserId}); // Types.ObjectId(userId) to convert string to ObjectId
             return token ? token : null;
         } catch (error) {
             return error;

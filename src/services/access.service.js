@@ -29,31 +29,21 @@ class AccessService {
     /*
     Check token used ?
     */
-    static handleRefreshToken = async (refreshToken) => {
-        const foundToken = await KeyTokenService.findByRequestTokenUsed(refreshToken);
-        console.log("token found", foundToken)
-        console.log("refreshToken", refreshToken)
-        // if token is found but get refresh again
-        if  (foundToken) { 
-            // decode to see who is this
-            const { userId, email} = await verifyJWT(refreshToken, foundToken.privateKey);
-            console.log("userId", userId);
-            // delete keys from keyStore
+    static handleRefreshToken = async ({refreshToken, user, keyStore}) => {
+        const {userId, email} = user;
+        console.log("keystore ", keyStore)
+        // check if token is used
+        if (keyStore.refreshTokensUsed.includes(refreshToken)){ 
             await KeyTokenService.deleteKeyById(userId);
-            throw new ForbiddenError('Something went wrong. Please login! ');
-        }
-        
-        // if token is not found
-        const holderToken = await KeyTokenService.findByRequestToken(refreshToken);
-
-        console.log("holderToken", holderToken)
-        if (!holderToken){
-            throw new NotFoundError('Token not found. ');
+            throw new ForbiddenError('Token has been used. Please login! ');
         }
 
-        // verify token
-        const { userId, email} = await verifyJWT(refreshToken, holderToken.privateKey);
-        const foundShop = await ShopService.findByEmail(email);
+        if (keyStore.refreshToken != refreshToken){
+            throw new AuthFailureError('Shop not registered.');
+        }
+
+
+    const foundShop = await ShopService.findByEmail(email);
 
         if (!foundShop){
             throw new BadRequestError('Error: Shop not found. ');
@@ -61,18 +51,16 @@ class AccessService {
         
         // if foundShop, provide a new token
         // move the refresh token to refreshTokensUsed
-        const tokens = await createTokenPair({userId, email}, holderToken.publicKey, holderToken.privateKey);
-
-        console.log("tokens", tokens)
-        console.log("refreshToken", refreshToken)
+        const tokens = await createTokenPair({userId, email}, keyStore.publicKey, keyStore.privateKey);
 
         // update refresh token
-        await KeyTokenService.updateRefreshToken({userId, usedRefreshToken: refreshToken, newRefreshToken: tokens.refreshToken});
+        await KeyTokenService.updateRefreshToken({keyStore, userId, usedRefreshToken: refreshToken, newRefreshToken: tokens.refreshToken});
 
         return {
-            userId: userId,
+            user,
             tokens
         }
+        
     }
     /*
     * @param {Object} param0
