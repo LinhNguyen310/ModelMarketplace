@@ -8,11 +8,12 @@ const {product, clothing, electronic} = require('../models/product.model');
 
 class ProductFactory {
     static async createProduct(type, payload){
+        console.log("type: ", type, "payload: ", payload)
         switch(type){
             case 'Clothing':
-                return await new Clothing(payload);
+                return new Clothing(payload).createProduct();
             case 'Electronic':
-                return await new Electronic(payload);
+                return new Electronic(payload).createProduct();
             default:
                 throw new BadRequestError(`Invalid product type ${type}`);
         }
@@ -21,7 +22,8 @@ class ProductFactory {
 
 // define basic product class
 class Product {
-    constructor(product_name, product_thumb, product_description, product_price, product_quantity, product_type, product_shop, product_attributes){
+    constructor({product_name, product_description, product_price, product_shop, product_type, product_thumb, product_quantity, product_attributes}){
+        console.log("product_name: ", product_name, "product_description: ", product_description, "product_price: ", product_price, "product_shop: ", product_shop, "product_type: ", product_type, "product_thumb: ", product_thumb, "product_quantity: ", product_quantity, "product_attributes: ", product_attributes)
         this.product_name = product_name;
         this.product_thumb = product_thumb;
         this.product_description = product_description;
@@ -39,10 +41,10 @@ class Product {
 
 class Clothing extends Product {
     async createProduct(){
-        const newClothing = new clothing.create(this.product_attributes);
+        const newClothing = await clothing.create(this.product_attributes);
         if (!newClothing) throw new BadRequestError('Error creating clothing');
 
-        const newProduct = new super.createProduct();
+        const newProduct = await super.createProduct();
 
         if (!newProduct) throw new BadRequestError('Error creating product');
 
@@ -52,10 +54,10 @@ class Clothing extends Product {
 
 class Electronic extends Product {
     async createProduct(){
-        const newElectronic = new clothing.create(this.product_attributes);
+        const newElectronic = await electronic.create(this.product_attributes);
         if (!newElectronic) throw new BadRequestError('Error creating clothing');
 
-        const newProduct = new super.createProduct();
+        const newProduct = await super.createProduct();
 
         if (!newProduct) throw new BadRequestError('Error creating product');
 
