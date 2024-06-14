@@ -6,11 +6,13 @@ const { ProductFactory } = require('../services/product.service');
 
 class ProductController {
     createProduct = async (req, res, next) => {
-        console.log("req.body: ", JSON.stringify(req.body));
         new SuccessResponse (
             {
                 message: 'Product has been created',
-                metadata: await ProductFactory.createProduct(req.body.product_type, req.body)
+                metadata: await ProductFactory.createProduct(req.body.product_type, req.body, {
+                    ...req.body, // unpack elements from array
+                    product_shop: req.user.userId
+                })
             }
         ).send(res);
     }
