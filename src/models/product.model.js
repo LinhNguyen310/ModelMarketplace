@@ -96,7 +96,7 @@ const furnitureSchema = new Schema({
         required: true
     }
 }, {
-    collection: 'Electronics',
+    collection: 'Furnitures',
     timestamps  : true
 });
 
