@@ -1,4 +1,6 @@
 'use strict'
+const { min, max } = require('lodash');
+const slugify = require('slugify');
 // store the public key and refresh token for each user
 const { Schema, model } = require('mongoose');
 
@@ -15,6 +17,7 @@ var productSchema = new Schema({
         type: String,
         required: true
     },
+    product_slug: String, // slugify the product name to be used in the url for example: product name => product-name
     product_description: String,
     product_price: {
         type: Number,
@@ -37,9 +40,39 @@ var productSchema = new Schema({
         type: Schema.Types.Mixed,
         required: true
     },
+    product_ratingAverage: {
+        type: Number,
+        default: 4.5,
+        min: [1, 'Rating must be above 1.0'],
+        max: [5, 'Rating must be below 5.0'],
+        set:(val) => Math.round(val * 10) / 10 // 4.666666 => 46.66666 => 47 => 4.7
+    },
+    product_variations :{
+        type: Array,
+        default: []
+    },
+    isDraft: {
+        type: Boolean,
+        default: true,
+        index: true ,// index here because this is one of the most commonly used queries,
+        select: false // do not show this field in the query result because it is not needed
+    },
+    isPublished: {
+        type: Boolean,
+        default: false,
+        index: true,
+        select: false
+    },
 }, {
     timestamps: true, // createdAt, updatedAt automatically created
     collection: COLLECTION_NAME // name of collection name should use for this model
+});
+
+
+// document middleware: runs before.save() and.create()
+productSchema.pre('save', function(next){
+    this.product_slug = slugify(this.product_name, {lower: true});
+    next();
 });
 
 // define the product type = clothing
