@@ -18,4 +18,6 @@ router.get('/published/all', asyncHandler(productController.getAllPublishedForSh
 
 // POST
 router.post('/publish/:id', asyncHandler(productController.publishProductByShop));
+router.post('/unpublish/:id', asyncHandler(productController.ubpublishProductByShop));
+
 module.exports = router; 

@@ -78,6 +78,18 @@ class ProductController {
         ).send(res);
     }
 
+    ubpublishProductByShop = async (req, res, next) => { 
+        const product_id = req.params.id; // get product id from request params ":id"
+        new SuccessResponse (
+            {
+                message: 'Product has been unpublished',
+                metadata: await ProductFactory.ubpublishProductByShop({
+                    product_shop: req.user.userId,
+                    product_id
+                })
+            }
+        ).send(res);
+    }
 }
 
 module.exports = new ProductController();

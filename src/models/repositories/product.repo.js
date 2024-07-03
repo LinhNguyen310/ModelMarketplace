@@ -33,6 +33,26 @@ const publishProductByShop = async ({product_shop, product_id}) => {
     return modifiedCount;
 }
 
+const unpublishProductByShop = async ({product_shop, product_id}) => {
+    const foundShop = await product.findOne(
+        {product_shop: new Types.ObjectId(product_shop),
+        _id: product_id});
+
+    if (!foundShop) {
+        return null;
+    }
+
+    if (foundShop.isPublished) {
+        return 0; // Return 0 if no update is needed
+    }
+
+    foundShop.isDraft = true;
+    foundShop.isPublished = false;
+    foundShop.updatedAt = new Date();
+    const { modifiedCount } = await foundShop.updateOne(foundShop);
+    return modifiedCount;
+}
+
 const queryProduct = async ({query, limit, skip}) => {
     return await product.find(query)
     .populate('product_shop', 'name email -_id') // refer documents in another colelction, only takes the name and email fields from the shop collection but not the _id, product_shop refers to the field in the product collection
@@ -46,5 +66,6 @@ const queryProduct = async ({query, limit, skip}) => {
 module.exports = {
     findAllDraftsForShop, 
     publishProductByShop, 
+    unpublishProductByShop,
     findAllPublishedForShop
 };
