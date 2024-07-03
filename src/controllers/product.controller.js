@@ -52,6 +52,32 @@ class ProductController {
         ).send(res);
     }
 
+    getAllPublishedForShop = async (req, res, next) => {
+        new SuccessResponse (
+            {
+                message: 'Get list published successfully!',
+                metadata: await ProductFactory.findAllPublishedForShop({
+                    product_shop: req.user.userId,
+                })
+            }
+        ).send(res);
+    }
+
+    publishProductByShop = async (req, res, next) => { 
+        console.log("req.params: ", req.params)
+        const product_id = req.params.id; // get product id from request params ":id"
+        console.log("product_id: ", product_id)
+        new SuccessResponse (
+            {
+                message: 'Product has been published',
+                metadata: await ProductFactory.publishProductByShop({
+                    product_shop: req.user.userId,
+                    product_id
+                })
+            }
+        ).send(res);
+    }
+
 }
 
 module.exports = new ProductController();
