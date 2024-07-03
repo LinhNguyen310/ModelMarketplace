@@ -74,7 +74,7 @@ productSchema.pre('save', function(next){
     this.product_slug = slugify(this.product_name, {lower: true});
     next();
 });
-
+ 
 // define the product type = clothing
 const clothingSchema = new Schema({
     brand: {

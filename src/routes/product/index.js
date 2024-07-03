@@ -6,7 +6,12 @@ const { authentication } = require('../../auth/authUtils');
 const productController = require('../../controllers/product.controller');
 const router = express.Router();
 
-// authen when logging out
+// AUTHENITCATION
 router.use(authentication); 
+// POST
 router.post('', asyncHandler(productController.createProduct));
+
+// GET
+// QUERY
+router.get('/drafts/all', asyncHandler(productController.getAllDraftsForShop));
 module.exports = router; 

@@ -2,7 +2,7 @@
 
 const { BadRequestError } = require('../core/error.response');
 const {product, clothing, electronic, furniture} = require('../models/product.model');    
-
+const { findAllDraftsForShop } = require('../models/repositories/product.repo');
 
 // define factory class to cteaye product
 
@@ -35,6 +35,18 @@ class ProductFactory {
         console.log("product class " , productClass, "payload: ", payload)
         return new productClass(payload).createProduct();
     }
+
+    static async findAllDraftsForShop({product_shop, limit = 50, skip = 0}){
+        /*
+            // write documentation for this function here
+            // this function is used to find all drafts for a shop
+            // it takes in the shop id, limit and skip values
+            // it then calls the findAllDraftsForShop function from the product repo
+            // and returns the result which is a promise object
+        */
+        const query = {product_shop, isDraft : true}; // query to find all drafts for a shop
+        return await findAllDraftsForShop({query, limit, skip});
+    }
 }
 
 // define basic product class
@@ -52,7 +64,7 @@ class Product {
 
     async createProduct(product_id){
         return await product.create({
-            ...this, 
+            ...this, /// 3 dots means spread operator, it spreads the object into individual key value pairs
             _id: product_id,
         });
     }
