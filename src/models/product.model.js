@@ -68,6 +68,8 @@ var productSchema = new Schema({
     collection: COLLECTION_NAME // name of collection name should use for this model
 });
 
+// create index for name and description
+productSchema.index({product_name: 'text', product_description: 'text'});
 
 // document middleware: runs before.save() and.create()
 productSchema.pre('save', function(next){
