@@ -6,6 +6,10 @@ const { authentication } = require('../../auth/authUtils');
 const productController = require('../../controllers/product.controller');
 const router = express.Router();
 
+// router.get('/all', asyncHandler(productController.getAllPublishedForShop)); // user can search for public items so no need to add after authentication step
+router.get('/search/:keySearch', asyncHandler(productController.getListSearchProduct)); // user can search for public items so no need to add after authentication step
+
+
 // AUTHENITCATION
 router.use(authentication); 
 // POST

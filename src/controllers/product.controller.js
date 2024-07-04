@@ -90,6 +90,15 @@ class ProductController {
             }
         ).send(res);
     }
+
+    getListSearchProduct = async (req, res, next) => {
+        new SuccessResponse (
+            {
+                message: 'Search products successfully!',
+                metadata: await ProductFactory.getListSearchProduct(req.params)
+            }
+        ).send(res);
+    }
 }
 
 module.exports = new ProductController();
