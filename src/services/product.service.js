@@ -76,8 +76,8 @@ class ProductFactory {
         // select field takes in object only. for example: select: {product_name: 1, product_price: 1, product_thumb: 1} means only select these fields
     }
 
-    static async findProduct({keySearch}) {
-        return await findProduct({keySearch});
+    static async findProduct({product_id}) {
+        return await findProduct({product_id, unselect: ['__v']}); // unselect field takes in object only. for example: unselect: {product_shop: 0} means do not select this field
     }
 }
 

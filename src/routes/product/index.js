@@ -9,11 +9,13 @@ const router = express.Router();
 // router.get('/all', asyncHandler(productController.getAllPublishedForShop)); // user can search for public items so no need to add after authentication step
 router.get('/search/:keySearch', asyncHandler(productController.getListSearchProduct)); // user can search for public items so no need to add after authentication step
 router.get('/all', asyncHandler(productController.getAllProducts)); // user can search for public items so no need to add after authentication step
+router.get('/:product_id', asyncHandler(productController.getProductById));
 
 // AUTHENITCATION
 router.use(authentication); 
 // POST
 router.post('', asyncHandler(productController.createProduct));
+
 
 // GET
 // QUERY

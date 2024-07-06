@@ -108,6 +108,18 @@ class ProductController {
             }
         ).send(res);
     }
+
+    getProductById = async (req, res, next) => {
+        console.log("req.params: ", req.params)
+        new SuccessResponse (
+            {
+                message: 'Get product successfully!',
+                metadata: await ProductFactory.findProduct({
+                    product_id: req.params.product_id,
+                })
+            }
+        ).send(res);
+    }
 }
 
 module.exports = new ProductController();

@@ -3,7 +3,7 @@ const { Types } = require('mongoose');
 // use repository pattern to hide the database logic from the service
 // GET
 const { product, electronic, furniture, clothing } = require('../product.model');
-const { getSelectData } = require('../../utils');
+const { getSelectData, getUnselectData } = require('../../utils');
 
 const findAllDraftsForShop = async({query, limit, skip}) => {
     return await queryProduct({query, limit, skip});
@@ -32,8 +32,8 @@ const findAllProducts = async ({limit, sort, page, filter, select}) => {
     return products;
 }
 
-const findProduct = async ({keySearch}) => {
-    return await product.findOne({product_name: keySearch}).lean(); // return the product with the name keySearch
+const findProduct = async ({product_id, unselect}) => {
+    return await product.findOne({_id: product_id}).select(getUnselectData(unselect)).lean().exec();
 }
 
 // PUT
