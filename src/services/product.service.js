@@ -2,7 +2,7 @@
 
 const { BadRequestError } = require('../core/error.response');
 const {product, clothing, electronic, furniture} = require('../models/product.model');    
-const { findAllDraftsForShop, findAllPublishedForShop, publishProductByShop, unpublishProductByShop, searchProductByUser } = require('../models/repositories/product.repo');
+const { findAllDraftsForShop, findAllPublishedForShop, publishProductByShop, unpublishProductByShop, searchProductByUser, findAllProducts, findProduct } = require('../models/repositories/product.repo');
 
 // define factory class to cteaye product
 
@@ -32,8 +32,10 @@ class ProductFactory {
     static async createProduct(type, payload){
         const productClass = ProductFactory.productRegistry[type];
         if (!productClass) throw new BadRequestError(`Invalid product type ${type}`);  // check if product type is registered if there is a class reference for that
-        console.log("product class " , productClass, "payload: ", payload)
         return new productClass(payload).createProduct();
+    }
+
+    static async updateProduct(type, payload){
     }
 
     // PUT
@@ -67,6 +69,15 @@ class ProductFactory {
 
     static async getListSearchProduct({keySearch}){
         return await searchProductByUser({keySearch});
+    }
+
+    static async findAllProducts({limit = 50, sort = 'ctime', page = 1, filter = {isPublished: true}}) {
+        return await findAllProducts({limit, sort, page, filter,select: ['product_name', 'product_price', 'product_thumb']}); // only select fields that are needed
+        // select field takes in object only. for example: select: {product_name: 1, product_price: 1, product_thumb: 1} means only select these fields
+    }
+
+    static async findProduct({keySearch}) {
+        return await findProduct({keySearch});
     }
 }
 
