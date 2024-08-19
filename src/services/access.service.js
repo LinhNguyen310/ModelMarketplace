@@ -21,7 +21,6 @@ class AccessService {
     static logout = async ({keyStore}) => {
         const newUserId = new Types.ObjectId(keyStore.userId);
         const delKey = await KeyTokenService.removeKeyById({_id:newUserId});
-        console.log({delKey});
         return delKey;
     }
 
@@ -31,7 +30,6 @@ class AccessService {
     */
     static handleRefreshToken = async ({refreshToken, user, keyStore}) => {
         const {userId, email} = user;
-        console.log("keystore ", keyStore)
         // check if token is used
         if (keyStore.refreshTokensUsed.includes(refreshToken)){ 
             await KeyTokenService.deleteKeyById(userId);
@@ -113,7 +111,6 @@ class AccessService {
 
         // create access token and refresh token
         const tokens = await createTokenPair({userId, email}, publicKeyObject, privateKey);
-        console.log("tokens", tokens);
 
         await KeyTokenService.createToken({
             userId,

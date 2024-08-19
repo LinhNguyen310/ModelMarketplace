@@ -24,6 +24,8 @@ router.get('', asyncHandler(productController.getAllProducts));
 
 // POST
 router.post('/publish/:id', asyncHandler(productController.publishProductByShop));
-router.post('/unpublish/:id', asyncHandler(productController.ubpublishProductByShop));
+router.post('/unpublish/:id', asyncHandler(productController.unpublishProductByShop));
 
-module.exports = router; 
+// PATCH    
+router.patch('/:product_id', asyncHandler(productController.updateProduct));
+module.exports = router;  

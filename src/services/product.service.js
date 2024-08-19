@@ -2,7 +2,7 @@
 
 const { BadRequestError } = require('../core/error.response');
 const {product, clothing, electronic, furniture} = require('../models/product.model');    
-const { findAllDraftsForShop, findAllPublishedForShop, publishProductByShop, unpublishProductByShop, searchProductByUser, findAllProducts, findProduct } = require('../models/repositories/product.repo');
+const { findAllDraftsForShop, findAllPublishedForShop, publishProductByShop, unpublishProductByShop, searchProductByUser, findAllProducts, findProduct, updateProductRepo } = require('../models/repositories/product.repo');
 
 // define factory class to cteaye product
 
@@ -32,10 +32,17 @@ class ProductFactory {
     static async createProduct(type, payload){
         const productClass = ProductFactory.productRegistry[type];
         if (!productClass) throw new BadRequestError(`Invalid product type ${type}`);  // check if product type is registered if there is a class reference for that
-        return new productClass(payload).createProduct();
+        return new productClass(payload).createProduct(product);
     }
 
-    static async updateProduct(type, payload){
+
+    // PATCH
+    static async updateProductService(type,productId, payload){
+        const productClass = ProductFactory.productRegistry[type];
+        if (!productClass) throw new BadRequestError(`Invalid product type ${type}`);  // check if product type is registered if there is a class reference for that
+        console.log("prodcut class" +productClass)
+        console.log("payload" + payload)
+        return new productClass(payload).updateProduct(productId, payload);
     }
 
     // PUT
@@ -43,7 +50,7 @@ class ProductFactory {
         return await publishProductByShop({product_shop, product_id});
     }
     
-    static async ubpublishProductByShop({product_shop, product_id}){
+    static async unpublishProductByShop({product_shop, product_id}){
         // create another one to follow SOLID principles
         return await unpublishProductByShop({product_shop, product_id});
     }
@@ -100,6 +107,10 @@ class Product {
             _id: product_id,
         });
     }
+
+    async updateProduct(productId, payload){
+        return await updateProductRepo(productId, payload, product);
+    }
 }
 
 class Clothing extends Product {
@@ -115,7 +126,20 @@ class Clothing extends Product {
         if (!newProduct) throw new BadRequestError('Error creating product');
 
         return newProduct;
-    }    
+    } 
+
+    async updateProduct(productId){
+        const objectParams = this; // get all the object params
+        // if has product_attributes => update the child product
+        // if not => just update Product
+        // check if we are updating the attribtutes
+        if (objectParams.product_attributes){
+            const updateProduct = await updateProduct(productId, objectParams.product_attributes, clothing);
+        }
+        // else update the parent product
+        const updateProduct = await super.updateProduct(productId, objectParams);
+        return updateProduct;
+    }
 }
 
 class Electronic extends Product {
@@ -131,6 +155,18 @@ class Electronic extends Product {
 
         return newProduct;
     }    
+    
+    async updateProduct(productId){
+        const objectParams = this; // get all the object params
+        
+        // check if we are updating the attribtutes
+        if (objectParams.product_attributes){
+            const updateProduct = await updateProduct(productId, objectParams.product_attributes, electronic);
+        }
+        // else update the parent product
+        const updateProduct = await super.updateProduct(productId, objectParams);
+        return updateProduct;
+    }
 }
 
 class Furniture extends Product {
@@ -146,6 +182,25 @@ class Furniture extends Product {
 
         return newProduct;
     }    
+
+    async updateProduct(productId){
+        console.log("product id " + productId)
+        const objectParams = this; // get all the object params
+        
+        // check if we are updating the attribtutes
+        if (objectParams.product_attributes){
+            console.log("product attributes " + objectParams.product_attributes.brand)
+            var test = await furniture.findOne({_id: productId})
+            console.log("test " + test) 
+            console.log("model " + furniture)
+            const updateProduct = await updateProductRepo(productId, objectParams.product_attributes, furniture);
+            return updateProduct;
+        }
+
+        // else update the parent product
+        const updatedProduct = await super.updateProduct(productId, objectParams);
+        return updatedProduct;
+    }
 }
 
 ProductFactory.registerProductType('Clothings', Clothing);

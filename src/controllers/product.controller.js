@@ -19,6 +19,19 @@ class ProductController {
         ).send(res);
     }
 
+    // PATCH
+    updateProduct = async (req, res, next) => {
+        const productId = req.params.product_id;
+        new SuccessResponse (
+            {
+                message: 'Product has been updated',
+                metadata: await ProductFactory.updateProductService(req.body.product_type, productId, {
+                    ...req.body, // unpack elements from array
+                    product_shop: req.user.userId
+                })
+            }
+        ).send(res);
+    }
     // QUERY PARAMS: limit, skip
     // GET /api/v1/products/drafts
     /**
@@ -64,9 +77,7 @@ class ProductController {
     }
 
     publishProductByShop = async (req, res, next) => { 
-        console.log("req.params: ", req.params)
         const product_id = req.params.id; // get product id from request params ":id"
-        console.log("product_id: ", product_id)
         new SuccessResponse (
             {
                 message: 'Product has been published',
@@ -78,12 +89,12 @@ class ProductController {
         ).send(res);
     }
 
-    ubpublishProductByShop = async (req, res, next) => { 
+    unpublishProductByShop = async (req, res, next) => { 
         const product_id = req.params.id; // get product id from request params ":id"
         new SuccessResponse (
             {
                 message: 'Product has been unpublished',
-                metadata: await ProductFactory.ubpublishProductByShop({
+                metadata: await ProductFactory.unpublishProductByShop({
                     product_shop: req.user.userId,
                     product_id
                 })

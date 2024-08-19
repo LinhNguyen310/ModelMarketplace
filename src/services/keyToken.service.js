@@ -25,7 +25,6 @@ class KeyTokenService {
 
     static findByRequestToken = async (refreshToken) => {   
         try {
-            console.log("refreshToken", refreshToken)
             return await keytokenModel.findOne({refreshToken}).lean();
         } catch (error) {
             return error;
@@ -62,7 +61,6 @@ class KeyTokenService {
     static findByUserId = async (userId) => {
         try {
             const newUserId = new Types.ObjectId(userId);
-            console.log(newUserId)
             const token = await keytokenModel.findOne({user: newUserId}); // Types.ObjectId(userId) to convert string to ObjectId
             return token ? token : null;
         } catch (error) {

@@ -84,8 +84,6 @@ const authentication = asyncHandler( async (req, res, next) => {
     // if has in db, then verify the token
     const accessToken = req.headers[HEADER.AUTHORIZATION];
     if (!accessToken) throw new AuthFailureError('Invalid Request access token not found');
-    
-    console.log("accessToken ", accessToken)
     // put try catch here because verify will throw an error if the token is invalid
     // put try catch where the function might throw an error
    
