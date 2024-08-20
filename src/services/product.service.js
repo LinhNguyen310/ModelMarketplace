@@ -3,6 +3,7 @@
 const { BadRequestError } = require('../core/error.response');
 const {product, clothing, electronic, furniture} = require('../models/product.model');    
 const { findAllDraftsForShop, findAllPublishedForShop, publishProductByShop, unpublishProductByShop, searchProductByUser, findAllProducts, findProduct, updateProductRepo } = require('../models/repositories/product.repo');
+const { removeUndefinedObject, nestedObjectParser } = require('../utils');
 
 // define factory class to cteaye product
 
@@ -40,8 +41,6 @@ class ProductFactory {
     static async updateProductService(type,productId, payload){
         const productClass = ProductFactory.productRegistry[type];
         if (!productClass) throw new BadRequestError(`Invalid product type ${type}`);  // check if product type is registered if there is a class reference for that
-        console.log("prodcut class" +productClass)
-        console.log("payload" + payload)
         return new productClass(payload).updateProduct(productId, payload);
     }
 
@@ -129,15 +128,15 @@ class Clothing extends Product {
     } 
 
     async updateProduct(productId){
-        const objectParams = this; // get all the object params
+        const objectParams = removeUndefinedObject(this); // get all the object params
         // if has product_attributes => update the child product
         // if not => just update Product
         // check if we are updating the attribtutes
         if (objectParams.product_attributes){
-            const updateProduct = await updateProduct(productId, objectParams.product_attributes, clothing);
+           await updateProductRepo(productId, nestedObjectParser(objectParams.product_attributes), clothing);
         }
         // else update the parent product
-        const updateProduct = await super.updateProduct(productId, objectParams);
+        const updateProduct = await super.updateProduct(productId, nestedObjectParser(objectParams));
         return updateProduct;
     }
 }
@@ -161,10 +160,10 @@ class Electronic extends Product {
         
         // check if we are updating the attribtutes
         if (objectParams.product_attributes){
-            const updateProduct = await updateProduct(productId, objectParams.product_attributes, electronic);
+            await updateProductRepo(productId, nestedObjectParser(objectParams.product_attributes), electronic);
         }
         // else update the parent product
-        const updateProduct = await super.updateProduct(productId, objectParams);
+        const updateProduct = await super.updateProduct(productId, nestedObjectParser(objectParams));
         return updateProduct;
     }
 }
@@ -184,22 +183,16 @@ class Furniture extends Product {
     }    
 
     async updateProduct(productId){
-        console.log("product id " + productId)
         const objectParams = this; // get all the object params
         
         // check if we are updating the attribtutes
         if (objectParams.product_attributes){
-            console.log("product attributes " + objectParams.product_attributes.brand)
-            var test = await furniture.findOne({_id: productId})
-            console.log("test " + test) 
-            console.log("model " + furniture)
-            const updateProduct = await updateProductRepo(productId, objectParams.product_attributes, furniture);
-            return updateProduct;
+            await updateProductRepo(productId, nestedObjectParser(objectParams.product_attributes), furniture);
         }
 
         // else update the parent product
-        const updatedProduct = await super.updateProduct(productId, objectParams);
-        return updatedProduct;
+        const updateProduct = await super.updateProduct(productId, nestedObjectParser(objectParams));
+        return updateProduct;
     }
 }
 

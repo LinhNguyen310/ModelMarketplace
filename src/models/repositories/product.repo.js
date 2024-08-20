@@ -89,8 +89,7 @@ const queryProduct = async ({query, limit, skip}) => {
 
 // PATCH
 const updateProductRepo = async (product_id, payload, model, isNew = true) => {
-    console.log("model is: ", model)
-    return await product.findOneAndUpdate({_id: product_id}, payload, {new: isNew}).lean().exec();
+    return await model.findOneAndUpdate({_id: product_id}, payload, {new: isNew}).lean().exec();
 }
 
 module.exports = {
